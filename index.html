@@ -14,6 +14,7 @@
       }
     </style>
     <link href="css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/comic-builder.css" rel="stylesheet">
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -26,9 +27,7 @@
     <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
     -->
   </head>
-
   <body>
-
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container">
@@ -43,8 +42,33 @@
     </div>
 
     <div class="container">
-
-
+		<div class='row mainContainer'>
+			<div class='panel memeContainer'>
+				<div class='searchPanel'>
+					<div class='searchOptions'>
+						<input type="text" class="span2" placeholder="Search Memes…" />
+						<select class='categories span2'>
+							<option value=''>Loading...</option>
+						</select>
+					</div>
+					<div class='searchLoading'>
+						<img src='img/circle_ball.gif' alt='loading' title='Loading Memes' />
+					</div>
+				</div>
+				<div class='memeList'>
+					
+					
+				</div>
+			</div>
+			<div class='panel canvasContainer'>
+				canvas
+			</div>
+			<div class='panel toolsContainer'>
+				tools
+			</div>
+			
+		</div>
+	
     </div> <!-- /container -->
 
     <!-- Le javascript

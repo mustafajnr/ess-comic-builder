@@ -1,0 +1,41 @@
+.mainContainer .panel{
+	float: left;
+	margin-right: 5px;
+	border: 1px solid gray;
+	min-height: 520px;
+}
+
+.mainContainer .memeContainer{
+	width:200px;
+	
+}
+.mainContainer .toolsContainer{
+	width:200px;
+	
+}
+.mainContainer .canvasContainer{
+	width:560px;
+}
+
+.searchPanel{
+	border-bottom: 1px solid black;
+	overflow: auto;
+}
+.searchOptions{
+	padding: 5px;
+	padding-bottom: 0px;
+	float: left;
+	width: 155px;
+}
+.searchOptions select.categories{
+	width:150px;
+}
+.searchLoading{
+	float: left;
+	padding-top: 26px;
+	padding-left: 6px;
+}
+.memeContainer .memeList{
+	overflow: visible;
+	height: 440px;
+}
