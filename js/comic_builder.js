@@ -84,7 +84,7 @@ var comicBuilder={
 		layer.add(verticalLine);
 		
 		/** adding horizontal lines **/
-		for(var i=1;i<=this.rowsNumber;i++){
+		for(var i=1;i<=this.rowsNumber-1;i++){
 			var verticalLine=new Kinetic.Line({
 				points: [
 					{ x: 0, y: i*this.panelHeight },
