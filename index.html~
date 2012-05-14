@@ -61,15 +61,7 @@
 				</div>
 			</div>
 			<div class='panel canvasContainer'>
-				<div class='drawingTools'>
-					drawing tools
-				</div>
-				<div class='canvasArea'>
-					canvas
-				</div>
-				<div class='panelTools'>
-					panel tools
-				</div>
+				canvas
 			</div>
 			<div class='panel toolsContainer'>
 				tools

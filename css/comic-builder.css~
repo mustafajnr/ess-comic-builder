@@ -22,7 +22,7 @@
 }
 
 .canvasArea{
-	min-height: 460px;
+	min-height: 480px;
 	border-top: 1px solid black;
 	border-bottom: 1px solid black;
 }
