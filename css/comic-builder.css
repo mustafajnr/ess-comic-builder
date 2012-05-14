@@ -37,13 +37,16 @@
 	float: left;
 	width: 155px;
 }
+.searchOptions input{
+	width:155px;
+}
 .searchOptions select.categories{
-	width:150px;
+	width:165px;
 }
 .searchLoading{
-	float: left;
+	float: right;
 	padding-top: 26px;
-	padding-left: 6px;
+	padding-right: 5px;
 }
 .memeContainer .memeList{
 	overflow: visible;
