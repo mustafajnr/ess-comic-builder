@@ -52,12 +52,12 @@
 	display: none;
 }
 .memeContainer .memeList{
-	overflow: visible;
+	overflow: auto;
 	height: 440px;
 }
 .memeImage{
-	width: 82px;
-	height: 82px;
+	width: 77px;
+	height: 77px;
 	margin-left: 13px;
 	margin-top: 10px;
 }
