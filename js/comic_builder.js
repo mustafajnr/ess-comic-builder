@@ -11,7 +11,7 @@ var comicBuilder={
 	/**
 	 * Options 
 	 */
-	memesURL:'json/memes.json',
+	memesURL:'json/memes.json.php',
 	canvasElementId:"canvasElement",
 	el:null,
 	width:false,
@@ -23,15 +23,27 @@ var comicBuilder={
 	 * init function for assigning events and setting up structure
 	 */
 	init:function(){
+		/*
+		 * setting stuff
+		 */
 		this.el=jQuery("#"+this.canvasElementId);
 		this.width=this.el.width();
 		this.height=this.el.height();
+		
+		this.loadMemes();
 		this.stage = new Kinetic.Stage({
 			container: this.canvasElementId,
 			width: this.width,
 			height: this.height
 		});
 		this.clear();
+		
+		/**
+		 * events 
+		 */
+		jQuery("select.categories").change(function(){
+			comicBuilder.loadMemes();
+		});
 	},
 	/**
 	 * clears the canvas
@@ -80,8 +92,28 @@ var comicBuilder={
 		}
 		Background.moveToBottom();
 		this.stage.add(layer);
+	},
+	loadMemes:function(){
+		jQuery(".loadingGif").show();
+		jQuery.ajax({
+			'url':this.memesURL,
+			'data':{
+				'category':jQuery("select.categories").val(),
+				'q':jQuery(".searchQuery").val()
+			},
+			'dataType': 'json',
+			'success':function(res){
+				for(var i=0;i<res.length;i++){
+					var meme=res[i];
+					jQuery("<img src='"+meme.path+"' title='"+meme.title+"' alt='"+meme.title+"' class='memeImage' />")
+					.appendTo(jQuery(".memeList"));
+				}
+				jQuery(".loadingGif").fadeOut();
+			},
+			'error':function(err,msg){
+				console.log("ERROR:"+err,msg)
+			}
+		});
 	}
-	
-	
 };
 jQuery(document).ready(function(){comicBuilder.init();});

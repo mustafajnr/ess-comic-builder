@@ -48,7 +48,16 @@
 	padding-top: 26px;
 	padding-right: 5px;
 }
+.loadingGif{
+	display: none;
+}
 .memeContainer .memeList{
 	overflow: visible;
 	height: 440px;
+}
+.memeImage{
+	width: 82px;
+	height: 82px;
+	margin-left: 13px;
+	margin-top: 10px;
 }
