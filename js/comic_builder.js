@@ -1,3 +1,12 @@
+/**
+ * @desc main object for comic builder component
+ * @package comicBuilder
+ * @author
+ * 		Amr Abosree
+ * 		Mustafa A. Abdel-Tawwab Jr.
+ * 		Youssef Gaber
+ * @since 2012-05-14 
+ */
 var comicBuilder={
 	/**
 	 * Options 
@@ -10,6 +19,9 @@ var comicBuilder={
 	panelHeight:230,
 	rowsNumber:2,
 	stage:null,
+	/**
+	 * init function for assigning events and setting up structure
+	 */
 	init:function(){
 		this.el=jQuery("#"+this.canvasElementId);
 		this.width=this.el.width();
@@ -21,6 +33,10 @@ var comicBuilder={
 		});
 		this.clear();
 	},
+	/**
+	 * clears the canvas
+	 * @author Yousif
+	 */
 	clear:function(){
 		this.stage.removeChildren();
 		this.stage.clear();
