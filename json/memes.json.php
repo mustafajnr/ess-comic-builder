@@ -51,4 +51,36 @@ $memes=array(
 );
 
 header("content-type:application/json");
-echo json_encode($memes);
+
+if(isset($_GET['category']) && isset($_GET['q']))
+{
+	$SearchMemes = array();
+	
+	if($_GET['q'] == "")
+		$NoSearch = true;
+	else
+		$NoSearch = false;
+	
+	if($_GET['category'] == "")
+		$NoCategory = true;
+	else
+		$NoCategory = false;
+	
+	foreach($memes as $meme)
+	{
+		if(!$NoCategory && $meme['category'] != $_GET['category'])
+			continue;
+		
+		if(!$NoSearch && stristr($meme['title'], $_GET['q']) === FALSE)
+			continue;
+		
+		$SearchMemes[] = $meme;
+	}
+	
+	echo json_encode($SearchMemes);
+}
+else
+{
+	echo json_encode($memes);
+}
+?>
