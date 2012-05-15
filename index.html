@@ -43,9 +43,10 @@
 					<div class='searchOptions'>
 						<input type="text" class="span2 searchQuery" placeholder="Search Memes…" />
 						<select class='categories span2'>
-							<option value=''>Loading...</option>
+							<option value=''>All</option>
 							<option value='laughing'>Laughing</option>
 							<option value='anger'>Anger</option>
+							<option value='others'>Other</option>
 						</select>
 					</div>
 					<div class='searchLoading'>
@@ -59,7 +60,8 @@
 			</div>
 			<div class='panel canvasContainer'>
 				<div class='drawingTools'>
-					drawing tools
+					<button class="btn btn-primary" rel="tooltip" title="Freehand Drawing" id="btnDraw"><i class="icon-pencil"></i></button>
+					<button class="btn btn-primary" rel="tooltip" title="Delete Selected" id="btnDelete"><i class="icon-remove-sign"></i></button>
 				</div>
 				<div class='canvasArea'>
 					<canvas id='canvasElement'></canvas>
