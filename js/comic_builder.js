@@ -83,6 +83,7 @@ var comicBuilder={
 			canvas.deactivateAll();
 			canvas.renderAll();
 		});
+		jQuery("#btnClear").click(function(){comicBuilder.newCanvas()});
 		
 		/**
 		 * Initializations
