@@ -93,7 +93,6 @@ var comicBuilder={
 			    reader.onload = function(event) {
 			        var img = new Image;
 			        img.onload = function() {
-			        	console.log("image onload");
 			        	fabric.Image.fromURL(img.src, function(img) {
 							oImg = img.set({ left: 100 , top:100 })
 							canvas.add(oImg);
@@ -104,13 +103,46 @@ var comicBuilder={
 			    };
 			    reader.readAsDataURL(e.target.files[0]);
 		   }
-		})
+		});
+		jQuery(".addImageSubmit").click(function(){
+			//validating url
+			$('.imageURL').popover('hide');
+			var url=jQuery(".imageURL").val();
+			var imageURLRegex=/^https?:\/\/(?:[a-z\-]+\.)+[a-z]{2,6}(?:\/[^\/#?]+)+\.(?:jpg|gif|png)/i;
+			if(imageURLRegex.test(url)){
+				jQuery(".imageURL").attr("disabled","disabled");
+				var img = new Image;
+				jQuery(".loadingExternalImage .loadingGif").show();
+				img.onload = function() {
+		        	fabric.Image.fromURL(img.src, function(img) {
+						oImg = img.set({ left: 100 , top:100 })
+						canvas.add(oImg);
+						canvas.renderAll();
+					});
+					jQuery(".imageURL").removeAttr("disabled").val("");
+					jQuery("#addImageModal").modal("hide");
+					jQuery(".loadingExternalImage .loadingGif").hide();
+			    };
+			    img.onerror=function(){
+					jQuery(".imageURL").removeAttr("disabled");
+					$('.imageURL').popover('show');
+					jQuery(".loadingExternalImage .loadingGif").hide();
+			    }
+				img.src=url;
+			}
+		});
 		
 		/**
 		 * Initializations
 		 */
 		
 		$("[rel=tooltip]").tooltip();
+		$('.imageURL').popover({
+			animation:true,
+			title:"Error",
+			content:"Couldn't load image, please check if the link is correct and reachable",
+			trigger:'manual'
+		});
 	},
 	/**
 	 * clears the canvas
