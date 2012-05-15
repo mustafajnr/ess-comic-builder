@@ -13,12 +13,13 @@ var comicBuilder={
 	 */
 	memesURL:'json/memes.json.php',
 	canvasElementId:"canvasElement",
-	el:null,
+	container:null,
+	canvasElement: null,
 	width:false,
 	height:false,
 	panelHeight:230,
 	rowsNumber:2,
-	stage:null,
+	canvas:null,
 	searchXHR:null,
 	/**
 	 * init function for assigning events and setting up structure
@@ -27,17 +28,16 @@ var comicBuilder={
 		/*
 		 * setting stuff
 		 */
-		this.el=jQuery("#"+this.canvasElementId);
-		this.width=this.el.width();
-		this.height=this.el.height();
+		this.canvasElement = jQuery("#"+this.canvasElementId);
+		this.container=this.canvasElement.parent();
+		this.width=this.container.width();
+		this.height=this.container.height();
 		
 		this.loadMemes();
-		this.stage = new Kinetic.Stage({
-			container: this.canvasElementId,
-			width: this.width,
-			height: this.height
-		});
-		this.clear();
+		canvas = new fabric.Canvas(this.canvasElementId, {backgroundColor: '#FFFFFF'});
+		canvas.setWidth(this.width);
+		canvas.setHeight(this.height);
+		this.newCanvas();
 		
 		/**
 		 * events 
@@ -50,54 +50,46 @@ var comicBuilder={
 			if(keyupTimeout)window.clearTimeout(keyupTimeout);
 			keyupTimeout=window.setTimeout(function(){comicBuilder.loadMemes();},500);
 		});
+		var cnvs = this.canvasElement;
+		this.container.droppable({
+			accept: '.memeImage',
+			drop: function(event, ui) {
+				console.log(ui.draggable);
+				var src = ui.draggable.attr("src");
+				var oImg;
+				fabric.Image.fromURL(src, function(img) {
+					oImg = img.set({ left: ui.position.left - jQuery(cnvs).offset().left + (img.width / 2), top: ui.position.top - jQuery(cnvs).offset().top + (img.height / 2) })
+					canvas.add(oImg);
+					canvas.renderAll();
+				});
+			}
+		});
 	},
 	/**
 	 * clears the canvas
 	 * @author Yousif
 	 */
-	clear:function(){
-		this.stage.removeChildren();
-		this.stage.clear();
-		var layer = new Kinetic.Layer();
-		
-		/** background **/
-		var Background = new Kinetic.Rect({
-			x: 0,
-			y: 0,
-			width: 500,
-			height: 500,
-			fill: "#FFFFFF",
-		});
-		layer.add(Background);
+	newCanvas:function(){
+		canvas.clear();
 		
 		/** vertical line **/
-		
-		var verticalLine=new Kinetic.Line({
-			points: [
-				{ x: this.width/2, y: 0 },
-				{ x: this.width/2, y: this.height }
-			],
-			stroke: "#000",
+		var verticalLine = new fabric.Line([ this.width/2, 0, this.width/2, this.height ], {
+			fill: 'black',
 			strokeWidth: 1,
-			lineCap: 'square'
+			selectable: false
 		});
-		layer.add(verticalLine);
+		canvas.add(verticalLine);
 		
 		/** adding horizontal lines **/
 		for(var i=1;i<=this.rowsNumber-1;i++){
-			var verticalLine=new Kinetic.Line({
-				points: [
-					{ x: 0, y: i*this.panelHeight },
-					{ x: this.width, y: i*this.panelHeight }
-				],
-				stroke: "#000",
+			var horizontalLine = new fabric.Line([ 0, i*this.panelHeight, this.width, i*this.panelHeight ], {
+				fill: 'black',
 				strokeWidth: 1,
-				lineCap: 'square'
+				selectable: false
 			});
-			layer.add(verticalLine);
+			canvas.add(horizontalLine);
 		}
-		Background.moveToBottom();
-		this.stage.add(layer);
+		canvas.renderAll();
 	},
 	loadMemes:function(){
 		jQuery(".loadingGif").show();
@@ -111,16 +103,33 @@ var comicBuilder={
 			'dataType': 'json',
 			'success':function(res){
 				jQuery(".memeImage").remove();
+				var memeImages = new Array();
 				for(var i=0;i<res.length;i++){
 					var meme=res[i];
-					jQuery("<img src='"+meme.path+"' title='"+meme.title+"' alt='"+meme.title+"' class='memeImage' />")
-					.appendTo(jQuery(".memeList"));
+					memeImages[i] = new Image();
+					memeImages[i].totalI = res.length;
+					memeImages[i].i = i;
+					memeImages[i].onload = function(){
+						jQuery(this).addClass('memeImage')
+						.attr('title', meme.title)
+						.attr('alt', meme.title)
+						.attr('data-width', this.width)
+						.attr('data-height', this.height)
+						.appendTo(jQuery(".memeList"));
+						
+						if(this.i == (this.totalI - 1))
+						{
+							jQuery(".memeImage").tooltip({ placement:'left' })
+							.draggable({ helper: 'clone',
+								start: function(e, ui){
+									$(ui.helper).css({ width: jQuery(this).attr('data-width'), height: jQuery(this).attr('data-width') });
+								}
+							});
+							jQuery(".loadingGif").fadeOut();
+						}
+					};
+					memeImages[i].src = meme.path;
 				}
-				jQuery(".loadingGif").fadeOut();
-				jQuery('.memeImage').tooltip({
-					placement:'left'
-					
-				});
 			},
 			'error':function(err,msg){
 				console.log("ERROR:"+err,msg)
