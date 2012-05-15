@@ -62,7 +62,10 @@
 				<div class='drawingTools'>
 					<button class="btn btn-primary" rel="tooltip" title="Freehand Drawing" id="btnDraw"><i class="icon-pencil"></i></button>
 					<button class="btn btn-primary" rel="tooltip" title="Delete Selected" id="btnDelete"><i class="icon-remove-sign"></i></button>
+					<button class="btn btn-primary" rel="tooltip" title="Add Image" id="btnPicture"><i class="icon-picture"></i></button>
 					<button class="btn btn-primary" rel="tooltip" title="Clear Image" id="btnClear"><i class="icon-file"></i></button>
+					
+				
 				</div>
 				<div class='canvasArea'>
 					<canvas id='canvasElement'></canvas>
@@ -78,7 +81,11 @@
 		</div>
 	
     </div> <!-- /container -->
-
+    <div style='width:0px;height:0px;overflow: hidden;'>
+    	<!-- dirty trick to make trigger click work on chrome -->
+    	<input type='file' id='inputFileHandler'  />
+    </div>
+	
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->

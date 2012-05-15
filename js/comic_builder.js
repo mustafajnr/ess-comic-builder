@@ -84,6 +84,27 @@ var comicBuilder={
 			canvas.renderAll();
 		});
 		jQuery("#btnClear").click(function(){comicBuilder.newCanvas()});
+		jQuery("#btnPicture").click(function(){
+			jQuery("#inputFileHandler").trigger("click")
+		});
+		jQuery("#inputFileHandler").change(function(e){
+			if(e.target.files.length>0){
+				reader = new FileReader;
+			    reader.onload = function(event) {
+			        var img = new Image;
+			        img.onload = function() {
+			        	console.log("image onload");
+			        	fabric.Image.fromURL(img.src, function(img) {
+							oImg = img.set({ left: 100 , top:100 })
+							canvas.add(oImg);
+							canvas.renderAll();
+						});
+			        };
+			        img.src = event.target.result;
+			    };
+			    reader.readAsDataURL(e.target.files[0]);
+		   }
+		})
 		
 		/**
 		 * Initializations
