@@ -60,13 +60,11 @@
 				<div class='drawingTools'>
 					<button class="btn btn-primary" rel="tooltip" title="Freehand Drawing" id="btnDraw"><i class="icon-pencil"></i></button>
 					<button class="btn btn-primary" rel="tooltip" title="Add Image" id="btnPicture"><i class=" icon-folder-open"></i></button>
-					<button class="btn btn-primary" rel="tooltip" title="Add Image with URL" data-toggle="modal" href="#addImageModal" id="btnPicture"><i class="icon-picture"></i></button>
+					<button class="btn btn-primary" rel="tooltip" title="Add Image with URL" data-toggle="modal" href="#addImageModal" id="btnPictureExternal"><i class="icon-picture"></i></button>
 					
 					 
 					<button class="btn btn-primary btn-danger" rel="tooltip" title="Delete Selected" id="btnDelete"><i class="icon-remove-sign"></i></button>
 					<button class="btn btn-primary btn-danger" rel="tooltip" title="Clear Image" id="btnClear"><i class="icon-refresh"></i></button>
-					
-				
 				</div>
 				<div class='canvasArea'>
 					<canvas id='canvasElement'></canvas>
@@ -103,11 +101,11 @@
 	    	</span>
 	    </div>
 	    <div class='note'>
-	    	only .jpeg,.jpg,.png allowed 
+	    	Only .jpeg,.jpg,.png allowed 
 	    </div>
 	  </div>
 	  <div class="modal-footer">
-	    <a href="#" class="btn " data-dismiss="modal" >Close</a>
+	    <a href="#" class="btn addImageClose" data-dismiss="modal">Close</a>
 	    <a href="#" class="btn btn-primary addImageSubmit">Add Image</a>
 	  </div>
 	</div>

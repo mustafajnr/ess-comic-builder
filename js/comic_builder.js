@@ -57,7 +57,7 @@ var comicBuilder={
 				var src = ui.draggable.attr("src");
 				var oImg;
 				fabric.Image.fromURL(src, function(img) {
-					oImg = img.set({ left: ui.position.left - jQuery(cnvs).offset().left + (img.width / 2), top: ui.position.top - jQuery(cnvs).offset().top + (img.height / 2) })
+					oImg = img.set({left: ui.position.left - jQuery(cnvs).offset().left + (img.width / 2), top: ui.position.top - jQuery(cnvs).offset().top + (img.height / 2)})
 					canvas.add(oImg);
 					canvas.renderAll();
 				});
@@ -71,17 +71,12 @@ var comicBuilder={
 				canvas.deactivateAll();
 		});
 		jQuery("#btnDelete").click(function() {
-			if(canvas.getActiveObject())
-				canvas.remove(canvas.getActiveObject());
-			
-			if (canvas.getActiveGroup()) {
-				canvas.getActiveGroup().forEachObject(function(o) {
-					canvas.remove(o);
-				});
-			}
-			
-			canvas.deactivateAll();
-			canvas.renderAll();
+			comicBuilder.removeSelected();
+		});
+		jQuery(".upper-canvas").attr("tabindex", "0").mousedown(function(){ $(this).focus(); return false; }).keydown(function(event){
+			//Delete button
+			if(event.keyCode == 46)
+				comicBuilder.removeSelected();
 		});
 		jQuery("#btnClear").click(function(){comicBuilder.newCanvas()});
 		jQuery("#btnPicture").click(function(){
@@ -94,7 +89,17 @@ var comicBuilder={
 			        var img = new Image;
 			        img.onload = function() {
 			        	fabric.Image.fromURL(img.src, function(img) {
-							oImg = img.set({ left: 100 , top:100 })
+							var width = img.width;
+							var height = img.height;
+							var maxDimensions = 500;
+
+							if(width > maxDimensions || height > maxDimensions){
+								var percentage = maxDimensions / Math.max(width, height);
+								width *= percentage;
+							}
+
+							oImg = img.set({left: 100 , top:100});
+							oImg.scaleToWidth(width);
 							canvas.add(oImg);
 							canvas.renderAll();
 						});
@@ -115,7 +120,17 @@ var comicBuilder={
 				jQuery(".loadingExternalImage .loadingGif").show();
 				img.onload = function() {
 		        	fabric.Image.fromURL(img.src, function(img) {
-						oImg = img.set({ left: 100 , top:100 })
+						var width = img.width;
+						var height = img.height;
+						var maxDimensions = 500;
+						
+						if(width > maxDimensions || height > maxDimensions){
+							var percentage = maxDimensions / Math.max(width, height);
+							width *= percentage;
+						}
+						
+						oImg = img.set({left: 100 , top:100});
+						oImg.scaleToWidth(width);
 						canvas.add(oImg);
 						canvas.renderAll();
 					});
@@ -130,6 +145,9 @@ var comicBuilder={
 			    }
 				img.src=url;
 			}
+		});
+		jQuery(".addImageClose").click(function(){
+			$('.imageURL').popover('hide');
 		});
 		
 		/**
@@ -197,10 +215,10 @@ var comicBuilder={
 						.attr('data-height', this.height)
 						.appendTo(jQuery(".memeList"));
 						
-						jQuery(this).tooltip({ placement:'left' })
-						.draggable({ helper: 'clone',
+						jQuery(this).tooltip({placement:'left'})
+						.draggable({helper: 'clone',
 							start: function(e, ui){
-								$(ui.helper).css({ width: jQuery(this).attr('data-width'), height: jQuery(this).attr('data-width') });
+								$(ui.helper).css({width: jQuery(this).attr('data-width'), height: jQuery(this).attr('data-width')});
 							}
 						});
 						
@@ -214,6 +232,19 @@ var comicBuilder={
 				console.log("ERROR:"+err,msg)
 			}
 		});
+	},
+	removeSelected:function(){
+		if(canvas.getActiveObject())
+			canvas.remove(canvas.getActiveObject());
+
+		if (canvas.getActiveGroup()) {
+			canvas.getActiveGroup().forEachObject(function(o) {
+				canvas.remove(o);
+			});
+		}
+
+		canvas.deactivateAll();
+		canvas.renderAll();
 	}
 };
 jQuery(document).ready(function(){comicBuilder.init();});
