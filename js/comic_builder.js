@@ -218,7 +218,7 @@ var comicBuilder={
 						jQuery(this).tooltip({placement:'left'})
 						.draggable({helper: 'clone',
 							start: function(e, ui){
-								$(ui.helper).css({width: jQuery(this).attr('data-width'), height: jQuery(this).attr('data-width')});
+								$(ui.helper).css({width: jQuery(this).attr('data-width'), height: jQuery(this).attr('data-height')});
 							}
 						});
 						
