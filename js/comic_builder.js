@@ -77,6 +77,29 @@ var comicBuilder={
 			//Delete button
 			if(event.keyCode == 46)
 				comicBuilder.removeSelected();
+			//Keyboard Arrows Movement
+			else if(event.keyCode <= 40 || event.keyCode >= 37){
+				if (canvas.getActiveObject()) obj = canvas.getActiveObject();
+				else if (canvas.getActiveGroup()) obj = canvas.getActiveGroup();
+				if (event.ctrlKey) speed = 1;
+				else if (event.shiftKey) speed = 10;
+				else speed = 5;
+				switch (event.keyCode){
+					case 37:
+						obj.setLeft(obj.getLeft() - speed);
+						break;
+					case 38:
+						obj.setTop(obj.getTop() - speed);
+						break;
+					case 39:
+						obj.setLeft(obj.getLeft() + speed);
+						break;
+					case 40:
+						obj.setTop(obj.getTop() + speed);
+						break;
+				}
+				canvas.renderAll();
+			}
 		});
 		jQuery("#btnClear").click(function(){comicBuilder.newCanvas()});
 		jQuery("#btnPicture").click(function(){
