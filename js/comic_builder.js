@@ -70,6 +70,21 @@ var comicBuilder={
 			if(canvas.isDrawingMode)
 				canvas.deactivateAll();
 		});
+		
+		jQuery("#btnText").click(function() {
+			var text = prompt("Your text?");
+			var textObj = new fabric.Text(text, {
+				fontFamily: 'saxMono',
+				left: comicBuilder.width / 2,
+				top: comicBuilder.height / 2,
+				fontSize: 20,
+				textAlign: "left",
+				fill: "#000000"
+			});
+			canvas.add(textObj);
+			canvas.renderAll();
+		});
+			
 		jQuery("#btnDelete").click(function() {
 			comicBuilder.removeSelected();
 		});
@@ -81,6 +96,7 @@ var comicBuilder={
 			else if(event.keyCode <= 40 || event.keyCode >= 37){
 				if (canvas.getActiveObject()) obj = canvas.getActiveObject();
 				else if (canvas.getActiveGroup()) obj = canvas.getActiveGroup();
+				else return;
 				if (event.ctrlKey) speed = 1;
 				else if (event.shiftKey) speed = 10;
 				else speed = 5;
