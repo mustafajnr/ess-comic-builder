@@ -7,6 +7,7 @@
  * 		Youssef Gaber
  * @since 2012-05-14 
  */
+var canvas;
 var comicBuilder={
 	/**
 	 * Options 
@@ -42,6 +43,19 @@ var comicBuilder={
 		/**
 		 * events 
 		 */
+		
+		//why 3 events? see this: http://fabricjs.com/events/
+		canvas.observe('object:selected', function(e) {
+			comicBuilder.updateLayers();
+		});
+		canvas.observe('selection:cleared', function(e) {
+			comicBuilder.updateLayers();
+		});
+		canvas.observe('selection:created', function(e) {
+			comicBuilder.updateLayers();
+		});
+		
+		
 		jQuery("select.categories").change(function(){
 			comicBuilder.loadMemes();
 		});
@@ -56,10 +70,12 @@ var comicBuilder={
 			drop: function(event, ui) {
 				var src = ui.draggable.attr("src");
 				var oImg;
+				var memeTitle=ui.draggable.attr("alt");
 				fabric.Image.fromURL(src, function(img) {
-					oImg = img.set({left: ui.position.left - jQuery(cnvs).offset().left + (img.width / 2), top: ui.position.top - jQuery(cnvs).offset().top + (img.height / 2)})
+					oImg = img.set({title: memeTitle, left: ui.position.left - jQuery(cnvs).offset().left + (img.width / 2), top: ui.position.top - jQuery(cnvs).offset().top + (img.height / 2)})
 					canvas.add(oImg);
 					canvas.renderAll();
+					comicBuilder.updateLayers();
 				});
 			}
 		});
@@ -137,10 +153,11 @@ var comicBuilder={
 								width *= percentage;
 							}
 
-							oImg = img.set({left: 100 , top:100});
+							oImg = img.set({left: 100 , top:100,title:"Local Image"});
 							oImg.scaleToWidth(width);
 							canvas.add(oImg);
 							canvas.renderAll();
+							comicBuilder.updateLayers();
 						});
 			        };
 			        img.src = event.target.result;
@@ -168,10 +185,11 @@ var comicBuilder={
 							width *= percentage;
 						}
 						
-						oImg = img.set({left: 100 , top:100});
+						oImg = img.set({left: 100 , top:100,title:"External Image"});
 						oImg.scaleToWidth(width);
 						canvas.add(oImg);
 						canvas.renderAll();
+						comicBuilder.updateLayers();
 					});
 					jQuery(".imageURL").removeAttr("disabled").val("");
 					jQuery("#addImageModal").modal("hide");
@@ -188,7 +206,14 @@ var comicBuilder={
 		jQuery(".addImageClose").click(function(){
 			$('.imageURL').popover('hide');
 		});
-		
+		jQuery(".removeLayer").live("click",function(){
+			var objectIndex=parseInt(jQuery(this).parents("tr:first").attr("rel"));
+			var canvasObjects=canvas.getObjects();
+			if(canvasObjects[objectIndex]){
+				canvas.remove(canvasObjects[objectIndex]);
+				comicBuilder.updateLayers();
+			}
+		});
 		/**
 		 * Initializations
 		 */
@@ -212,8 +237,11 @@ var comicBuilder={
 		var verticalLine = new fabric.Line([ this.width/2, 0, this.width/2, this.height ], {
 			fill: 'black',
 			strokeWidth: 1,
-			selectable: false
+			selectable: false,
+			coreItem:true
 		});
+		verticalLine.set("coreItem",true);
+		verticalLine.set("title","vertical Line");
 		canvas.add(verticalLine);
 		
 		/** adding horizontal lines **/
@@ -221,12 +249,19 @@ var comicBuilder={
 			var horizontalLine = new fabric.Line([ 0, i*this.panelHeight, this.width, i*this.panelHeight ], {
 				fill: 'black',
 				strokeWidth: 1,
-				selectable: false
+				selectable: false,
+				coreItem:true
 			});
 			canvas.add(horizontalLine);
+			horizontalLine.set("coreItem",true);
+			horizontalLine.set("title","Horizontal Line "+i);
 		}
 		canvas.renderAll();
+		this.updateLayers();
 	},
+	/**
+	 * loads memes images with ajax
+	 */
 	loadMemes:function(){
 		jQuery(".loadingGif").show();
 		if(this.searchXHR)this.searchXHR.abort();
@@ -272,6 +307,27 @@ var comicBuilder={
 			}
 		});
 	},
+	/**
+	 * updates layers panel 
+	 */
+	updateLayers:function(){
+		var canvasObjects=canvas.getObjects();
+		jQuery(".layesTable tbody").html("");
+		if(canvasObjects.length>0){
+			for(var i=0;i<canvasObjects.length;i++){
+				var object=canvasObjects[i];
+				jQuery("<tr rel='"+i+"' class='"+(object.isActive()?"selected":"")+"' ><td>"+object.get("title")+"</td><td><button class='tinyButtons btn btn-danger removeLayer' ><i class='icon-remove'></i></button></td></tr>").appendTo(jQuery(".layesTable tbody"));
+				
+			}
+		}else{
+			jQuery(".layesTable tbody").html("<tr><td colspan='2'>No layers added</td></tr>");
+			
+			
+		}
+	},
+	/**
+	 * removes selected objects from canvas 
+	 */
 	removeSelected:function(){
 		if(canvas.getActiveObject())
 			canvas.remove(canvas.getActiveObject());
@@ -284,6 +340,7 @@ var comicBuilder={
 
 		canvas.deactivateAll();
 		canvas.renderAll();
+		this.updateLayers();
 	}
 };
 jQuery(document).ready(function(){comicBuilder.init();});
