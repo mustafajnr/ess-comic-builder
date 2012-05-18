@@ -214,6 +214,28 @@ var comicBuilder={
 				comicBuilder.updateLayers();
 			}
 		});
+		
+		
+		//This is is still buggy, it might be due to a bug with the library itself
+		jQuery(".moveLayerUp").live("click",function(){
+			var objectIndex=parseInt(jQuery(".selected").attr("rel"));
+			var canvasObjects=canvas.getObjects();
+			if(canvasObjects[objectIndex]){
+				canvas.bringForward(canvasObjects[objectIndex]);
+				comicBuilder.updateLayers();
+			}
+		});
+		
+		jQuery(".moveLayerDown").live("click",function(){
+			var objectIndex=parseInt(jQuery(".selected").attr("rel"));
+			if(objectIndex == 2)
+				return;
+			var canvasObjects=canvas.getObjects();
+			if(canvasObjects[objectIndex]){
+				canvas.sendBackwards(canvasObjects[objectIndex]);
+				comicBuilder.updateLayers();
+			}
+		});
 		/**
 		 * Initializations
 		 */
@@ -314,15 +336,12 @@ var comicBuilder={
 		var canvasObjects=canvas.getObjects();
 		jQuery(".layesTable tbody").html("");
 		if(canvasObjects.length>0){
-			for(var i=0;i<canvasObjects.length;i++){
+			for(var i=canvasObjects.length - 1;i >= 0;i--){
 				var object=canvasObjects[i];
-				jQuery("<tr rel='"+i+"' class='"+(object.isActive()?"selected":"")+"' ><td>"+object.get("title")+"</td><td><button class='tinyButtons btn btn-danger removeLayer' ><i class='icon-remove'></i></button></td></tr>").appendTo(jQuery(".layesTable tbody"));
-				
+				jQuery("<tr rel='"+i+"' class='"+(object.isActive()?"selected":"")+"'><td>"+object.get("title")+"</td><td><button class='tinyButtons btn btn-danger removeLayer' ><i class='icon-remove'></i></button></td></tr>").appendTo(jQuery(".layesTable tbody"));
 			}
 		}else{
 			jQuery(".layesTable tbody").html("<tr><td colspan='2'>No layers added</td></tr>");
-			
-			
 		}
 	},
 	/**
