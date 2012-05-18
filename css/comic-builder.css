@@ -72,3 +72,6 @@
 .layesTable .selected td{
 	background: #EEE;
 }
+.layesTable th:first-child{
+	width: 160px;
+}
