@@ -58,10 +58,12 @@
 			</div>
 			<div class='panel canvasContainer'>
 				<div class='drawingTools'>
+					<!-- Any buttons that will load tools in the right panel will have the class 'toolButton' so we can easily toggle the 'active' class when changing tools -->
 					<button class="btn btn-primary" rel="tooltip" title="Freehand Drawing" id="btnDraw"><i class="icon-pencil"></i></button>
-					<button class="btn btn-primary" rel="tooltip" title="Add Text" id="btnText"><i class="icon-text-width"></i></button>
+					<button class="btn btn-primary toolButton" rel="tooltip" title="Add Text" id="btnText"><i class="icon-text-width"></i></button>
 					<button class="btn btn-primary" rel="tooltip" title="Add Image" id="btnPicture"><i class="icon-folder-open"></i></button>
 					<button class="btn btn-primary" rel="tooltip" title="Add Image with URL" data-toggle="modal" href="#addImageModal" id="btnPictureExternal"><i class="icon-picture"></i></button>
+					<button class="btn btn-primary toolButton active" rel="tooltip" title="Layers" id="btnLayers"><i class="icon-book"></i></button>
 					
 					 
 					<button class="btn btn-danger" rel="tooltip" title="Delete Selected" id="btnDelete"><i class="icon-remove-sign"></i></button>
@@ -75,7 +77,8 @@
 				</div>
 			</div>
 			<div class='panel toolsContainer'>
-				<table class="table table-condensed layesTable">
+				<!-- Tool boxes will have the  'toolContainer' class so we can easily hide them when changing between tools-->
+				<table class="table table-condensed layesTable toolContainer">
 			        <thead>
 			          <tr>
 			            <th>Layers</th>
@@ -93,6 +96,18 @@
 			        	</td>
 			        </tfoot>
 			      </table>
+				<div class="toolContainer textTool">
+					<input type="text" class="textString" placeholder="Enter your text..." />
+					<label>Font</label>
+					<select class='fontValue'>
+						<option value="Impact" selected="selected">Impact</option>
+						<option value="Times_New_Roman">Times New Roman</option>
+						<option value="saxMono">SaxMono</option>
+					</select>
+					<label>Font Size</label>
+					<input type="text" class="fontSize" value="25" />
+					<button class="btn btn-primary textAdd">Add</button>
+				</div>
 			</div>
 			
 		</div>
@@ -135,10 +150,9 @@
 	<!-- By Mustafa: The following code is to try the Add Text Box functionality 
 		 notice that i have copied the fabric.js below-->
     <script src="js/fabric.js"></script>
-	<script src="js/saxmono.cufonfonts.js" type="text/javascript"></script>
-	<script type="text/javascript">
-		Cufon.replace('.saxmono', { fontFamily: 'saxMono', hover: true }); 
-	</script>
+	<script src="fonts/Impact.font.js" type="text/javascript"></script>
+	<script src="fonts/SaxMono.font.js" type="text/javascript"></script>
+	<script src="fonts/Times_New_Roman.font.js" type="text/javascript"></script>
 	<!-- End of Add Text Box Test Code -->
 
     <script src="js/jquery-1.7.2.min.js"></script>
