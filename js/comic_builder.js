@@ -108,6 +108,13 @@ var comicBuilder={
 			//Delete button
 			if(event.keyCode == 46)
 				comicBuilder.removeSelected();
+
+			//PageUp & PageDown
+			else if(event.keyCode == 33)
+				comicBuilder.layerUp();
+			else if(event.keyCode == 34)
+				comicBuilder.layerDown();
+				
 			//Keyboard Arrows Movement
 			else if(event.keyCode <= 40 || event.keyCode >= 37){
 				if (canvas.getActiveObject()) obj = canvas.getActiveObject();
@@ -216,25 +223,12 @@ var comicBuilder={
 		});
 		
 		
-		//This is is still buggy, it might be due to a bug with the library itself
 		jQuery(".moveLayerUp").live("click",function(){
-			var objectIndex=parseInt(jQuery(".selected").attr("rel"));
-			var canvasObjects=canvas.getObjects();
-			if(canvasObjects[objectIndex]){
-				canvas.bringForward(canvasObjects[objectIndex]);
-				comicBuilder.updateLayers();
-			}
+			comicBuilder.layerUp();
 		});
 		
 		jQuery(".moveLayerDown").live("click",function(){
-			var objectIndex=parseInt(jQuery(".selected").attr("rel"));
-			if(objectIndex == 2)
-				return;
-			var canvasObjects=canvas.getObjects();
-			if(canvasObjects[objectIndex]){
-				canvas.sendBackwards(canvasObjects[objectIndex]);
-				comicBuilder.updateLayers();
-			}
+			comicBuilder.layerDown();
 		});
 		/**
 		 * Initializations
@@ -248,6 +242,26 @@ var comicBuilder={
 			trigger:'manual'
 		});
 	},
+	//This is is still buggy, it might be due to a bug with the library itself
+	//Mustafa: I put them in new functions to use them later in programming the PageUp & PageDown
+	layerUp: function(){
+				 var objectIndex=parseInt(jQuery(".selected").attr("rel"));
+	 			 var canvasObjects=canvas.getObjects();
+	 			 if(canvasObjects[objectIndex]){
+	 				 canvas.bringForward(canvasObjects[objectIndex]);
+	 				 this.updateLayers();
+	 			 }
+			 },
+	layerDown: function(){
+	   			   var objectIndex=parseInt(jQuery(".selected").attr("rel"));
+	   			   if(objectIndex == 2)
+	   				   return;
+				   var canvasObjects=canvas.getObjects();
+	   			   if(canvasObjects[objectIndex]){
+	   				   canvas.sendBackwards(canvasObjects[objectIndex]);
+	   				   this.updateLayers();
+	   			   }
+			   },
 	/**
 	 * clears the canvas
 	 * @author Yousif
