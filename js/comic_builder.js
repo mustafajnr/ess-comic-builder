@@ -396,7 +396,8 @@ var comicBuilder={
 		if(canvasObjects.length>0){
 			for(var i=canvasObjects.length - 1;i >= 0;i--){
 				var object=canvasObjects[i];
-				var title = object.get("title");
+				var title = object.get("title") || "Drawing";
+				
 				if(title.length > 18){
 					title = title.substring(0, 18) + '...';
 				}
