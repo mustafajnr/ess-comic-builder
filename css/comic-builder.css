@@ -41,7 +41,7 @@
 .searchOptions input{
 	width:155px;
 }
-.searchOptions select.categories{
+.searchOptions select{
 	width:165px;
 }
 .searchLoading{
@@ -74,4 +74,14 @@
 }
 .layesTable th:first-child{
 	width: 160px;
+}
+.textTool {
+	padding: 5px;
+	display: none;
+}
+.textTool input{
+	width: 175px;
+}
+.textTool select{
+	width: 185px;
 }
