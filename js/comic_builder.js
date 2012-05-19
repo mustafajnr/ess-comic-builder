@@ -12,7 +12,7 @@ var comicBuilder={
 	/**
 	 * Options 
 	 */
-	memesURL:'json/memes.json.php',
+	memesURL:'ajax/memes.ajax.php',
 	canvasElementId:"canvasElement",
 	container:null,
 	canvasElement: null,
@@ -300,8 +300,8 @@ var comicBuilder={
 				alert('Sorry, your browser is not supported.');
 		    }
 		    else {
-				var imageWindow=window.open("","");
-				imageWindow.document.write("<img src='"+canvas.toDataURL('png')+"' />");
+				canvas.deactivateAll();
+				$.download('ajax/download.ajax.php','imgdata=' + encodeURIComponent(canvas.toDataURL('png')));
 		    }
 			
 		});
@@ -461,3 +461,15 @@ var comicBuilder={
 	}
 };
 jQuery(document).ready(function(){comicBuilder.init();});
+jQuery.download = function(url, data, method){
+	if( url && data ){ 
+		data = typeof data == 'string' ? data : jQuery.param(data);
+		var inputs = '';
+		jQuery.each(data.split('&'), function(){ 
+			var pair = this.split('=');
+			inputs+='<input type="hidden" name="'+ pair[0] +'" value="'+ pair[1] +'" />'; 
+		});
+		jQuery('<form action="'+ url +'" method="'+ (method||'post') +'">'+inputs+'</form>')
+		.appendTo('body').submit().remove();
+	};
+};
