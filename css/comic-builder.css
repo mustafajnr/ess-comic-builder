@@ -85,3 +85,7 @@
 .textTool select{
 	width: 185px;
 }
+
+.rightBtn{
+	float:right;
+}

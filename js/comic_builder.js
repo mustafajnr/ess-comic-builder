@@ -294,6 +294,17 @@ var comicBuilder={
 				comicBuilder.updateLayers();
 			}
 		});
+		
+		jQuery("#btnDownload").click(function(){
+			if (!fabric.Canvas.supports('toDataURL')) {
+				alert('Sorry, your browser is not supported.');
+		    }
+		    else {
+				var imageWindow=window.open("","");
+				imageWindow.document.write("<img src='"+canvas.toDataURL('png')+"' />");
+		    }
+			
+		});
 		/**
 		 * Initializations
 		 */
