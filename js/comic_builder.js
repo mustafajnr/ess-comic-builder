@@ -23,6 +23,7 @@ var comicBuilder={
 	canvas:null,
 	searchXHR:null,
 	isTextSelected:false,
+	separatorMode:0,
 	/**
 	 * init function for assigning events and setting up structure
 	 */
@@ -54,6 +55,14 @@ var comicBuilder={
 			} else {
 				comicBuilder.isTextSelected = false;
 				comicBuilder.textTool(false);
+			}
+		});
+		canvas.observe('mouse:up', function(e) {
+			if (comicBuilder.separatorMode == 2) {
+				comicBuilder.addHorizontalSeparator(canvas.getPointer(e.e).y);
+			}
+			else if (comicBuilder.separatorMode == 1) {
+				comicBuilder.addVerticalSeparator(canvas.getPointer(e.e).x);
 			}
 		});
 		canvas.observe('selection:cleared', function(e) {
@@ -95,6 +104,28 @@ var comicBuilder={
 			
 			if(canvas.isDrawingMode)
 				canvas.deactivateAll();
+		});
+
+		jQuery("#btnHorizontal").click(function() {
+			jQuery("#btnHorizontal").toggleClass('active');
+			if (comicBuilder.separatorMode == 2)
+				comicBuilder.separatorMode = 0
+			else if (comicBuilder.separatorMode == 1){
+				jQuery("#btnVertical").toggleClass('active');
+				comicBuilder.separatorMode = 2;
+			}
+			else comicBuilder.separatorMode = 2;
+		});
+
+		jQuery("#btnVertical").click(function() {
+			jQuery("#btnVertical").toggleClass('active');
+			if (comicBuilder.separatorMode == 1)
+				comicBuilder.separatorMode = 0
+			else if (comicBuilder.separatorMode == 2){
+				jQuery("#btnHorizontal").toggleClass('active');
+				comicBuilder.separatorMode = 1;
+			}
+			else comicBuilder.separatorMode = 1;
 		});
 		
 		jQuery("#btnText").click(function() {
@@ -183,13 +214,15 @@ var comicBuilder={
 				else speed = 5;
 				switch (event.keyCode){
 					case 37:
-						obj.setLeft(obj.getLeft() - speed);
+						if (!obj.lockMovementX)
+							obj.setLeft(obj.getLeft() - speed);
 						break;
 					case 38:
 						obj.setTop(obj.getTop() - speed);
 						break;
 					case 39:
-						obj.setLeft(obj.getLeft() + speed);
+						if (!obj.lockMovementX)
+							obj.setLeft(obj.getLeft() + speed);
 						break;
 					case 40:
 						obj.setTop(obj.getTop() + speed);
@@ -346,7 +379,8 @@ var comicBuilder={
 	newCanvas:function(){
 		canvas.clear();
 		
-		/** vertical line **/
+		this.addVerticalSeparator(this.width / 2);
+		/** vertical line *
 		var verticalLine = new fabric.Line([ this.width/2, 0, this.width/2, this.height ], {
 			fill: 'black',
 			strokeWidth: 1,
@@ -357,7 +391,7 @@ var comicBuilder={
 		verticalLine.set("title","vertical Line");
 		canvas.add(verticalLine);
 		
-		/** adding horizontal lines **/
+		/** adding horizontal lines *
 		for(var i=1;i<=this.rowsNumber-1;i++){
 			var horizontalLine = new fabric.Line([ 0, i*this.panelHeight, this.width, i*this.panelHeight ], {
 				fill: 'black',
@@ -370,7 +404,8 @@ var comicBuilder={
 			horizontalLine.set("title","Horizontal Line "+i);
 		}
 		canvas.renderAll();
-		this.updateLayers();
+		*/
+		this.addHorizontalSeparator(this.height / 2);
 	},
 	/**
 	 * loads memes images with ajax
@@ -480,7 +515,35 @@ var comicBuilder={
 			$('.fontSize').val(25);
 			$('.textAdd').attr("disabled", false);
 		}
-	}
+	},
+	addHorizontalSeparator:function(y){
+								var hLine = new fabric.Line([ 0, y, this.width, y ], {
+									fill: 'black',
+									strokeWidth: 2,
+									selectable: true,
+									coreItem:true
+								});
+								canvas.add(hLine);
+								hLine.set("coreItem",true);
+								hLine.set("title","Horizontal Panel Separator");
+								hLine.lockMovementX = hLine.lockScalingX = hLine.lockScalingY = hLine.lockRotation = true;
+								canvas.renderAll();
+								this.updateLayers();
+						   },
+	addVerticalSeparator:function(x){
+							 var vLine = new fabric.Line([ x, 0, x, this.height ], {
+								 fill: 'black',
+								 strokeWidth: 2,
+								 selectable: true,
+								 coreItem:true
+					 		 });
+					 		 canvas.add(vLine);
+		 					 vLine.set("coreItem",true);
+					 		 vLine.set("title","Vertical Panel Separator");
+							 vLine.lockMovementY = vLine.lockScalingX = vLine.lockScalingY = vLine.lockRotation = true;
+							 canvas.renderAll();
+							 this.updateLayers();
+						 } 
 };
 jQuery(document).ready(function(){comicBuilder.init();});
 jQuery.download = function(url, data, method){
