@@ -12,7 +12,7 @@ var comicBuilder={
 	/**
 	 * Options 
 	 */
-	memesURL:'json/memes.json.php',
+	memesURL:'ajax/memes.ajax.php',
 	canvasElementId:"canvasElement",
 	container:null,
 	canvasElement: null,
@@ -22,6 +22,7 @@ var comicBuilder={
 	rowsNumber:2,
 	canvas:null,
 	searchXHR:null,
+	isTextSelected:false,
 	/**
 	 * init function for assigning events and setting up structure
 	 */
@@ -47,9 +48,18 @@ var comicBuilder={
 		//why 3 events? see this: http://fabricjs.com/events/
 		canvas.observe('object:selected', function(e) {
 			comicBuilder.updateLayers();
+			if(e.target instanceof fabric.Text){
+				comicBuilder.isTextSelected = true;
+				comicBuilder.textTool(true);
+			} else {
+				comicBuilder.isTextSelected = false;
+				comicBuilder.textTool(false);
+			}
 		});
 		canvas.observe('selection:cleared', function(e) {
 			comicBuilder.updateLayers();
+			comicBuilder.isTextSelected = false;
+			comicBuilder.textTool(false);
 		});
 		canvas.observe('selection:created', function(e) {
 			comicBuilder.updateLayers();
@@ -88,23 +98,71 @@ var comicBuilder={
 		});
 		
 		jQuery("#btnText").click(function() {
-			var text = prompt("Your text?");
-			var textObj = new fabric.Text(text, {
-				fontFamily: 'saxMono',
+			if($(this).hasClass('active')){
+				comicBuilder.resetTools();
+			} else {
+				comicBuilder.resetTools();
+				$('.textTool').show();
+				$(this).addClass('active');
+			}
+		});
+		
+		jQuery(".textAdd").click(function() {
+			var Text = $('.textString').val();
+			var Font = $('.fontValue').val();
+			var Size = $('.fontSize').val();
+			var textObj = new fabric.Text(Text, {
+				fontFamily: Font,
 				left: comicBuilder.width / 2,
 				top: comicBuilder.height / 2,
-				fontSize: 20,
+				fontSize: Size,
 				textAlign: "left",
 				fill: "#000000"
 			});
+			textObj.title = Text;
 			canvas.add(textObj);
 			canvas.renderAll();
+			comicBuilder.updateLayers();
+		});
+		
+		jQuery(".textString").keyup(function(){
+			if(comicBuilder.isTextSelected){
+				var object = canvas.getActiveObject();
+				object.setText($(".textString").val());
+				canvas.renderAll();
+			}
+		});
+		
+		jQuery(".fontSize").keyup(function(){
+			if(comicBuilder.isTextSelected){
+				var object = canvas.getActiveObject();
+				object.fontSize = $(".fontSize").val();
+				canvas.renderAll();
+			}
+		});
+		
+		jQuery(".fontValue").change(function(){
+			if(comicBuilder.isTextSelected){
+				var object = canvas.getActiveObject();
+				object.fontFamily = $(".fontValue").val();
+				canvas.renderAll();
+			}
+		});
+		
+		jQuery("#btnLayers").click(function(){
+			if($(this).hasClass('active')){
+				comicBuilder.resetTools();
+			} else {
+				comicBuilder.resetTools();
+				$('.layesTable').show();
+				$(this).addClass('active');
+			}
 		});
 			
 		jQuery("#btnDelete").click(function() {
 			comicBuilder.removeSelected();
 		});
-		jQuery(".upper-canvas").attr("tabindex", "0").mousedown(function(){ $(this).focus(); return false; }).keydown(function(event){
+		jQuery(".upper-canvas").attr("tabindex", "0").mousedown(function(){$(this).focus();return false;}).keydown(function(event){
 			//Delete button
 			if(event.keyCode == 46)
 				comicBuilder.removeSelected();
@@ -230,6 +288,25 @@ var comicBuilder={
 		jQuery(".moveLayerDown").live("click",function(){
 			comicBuilder.layerDown();
 		});
+		
+		jQuery("#btnDownload").click(function(){
+			if (!fabric.Canvas.supports('toDataURL')) {
+				alert('Sorry, your browser is not supported.');
+		    }
+		    else {
+				canvas.deactivateAll();
+				$.download('ajax/download.ajax.php','imgdata=' + encodeURIComponent(canvas.toDataURL('png')));
+		    }
+			
+		});
+		
+		jQuery("#btnFlip").click(function(){
+			if(canvas.getActiveObject()){
+				var object = canvas.getActiveObject();
+				object.flipX = !object.flipX;
+				canvas.renderAll();
+			}
+		});
 		/**
 		 * Initializations
 		 */
@@ -352,7 +429,12 @@ var comicBuilder={
 		if(canvasObjects.length>0){
 			for(var i=canvasObjects.length - 1;i >= 0;i--){
 				var object=canvasObjects[i];
-				jQuery("<tr rel='"+i+"' class='"+(object.isActive()?"selected":"")+"'><td>"+object.get("title")+"</td><td><button class='tinyButtons btn btn-danger removeLayer' ><i class='icon-remove'></i></button></td></tr>").appendTo(jQuery(".layesTable tbody"));
+				var title = object.get("title") || "Drawing";
+				
+				if(title.length > 18){
+					title = title.substring(0, 18) + '...';
+				}
+				jQuery("<tr rel='"+i+"' class='"+(object.isActive()?"selected":"")+"'><td>"+title+"</td><td><button class='tinyButtons btn btn-danger removeLayer' ><i class='icon-remove'></i></button></td></tr>").appendTo(jQuery(".layesTable tbody"));
 			}
 		}else{
 			jQuery(".layesTable tbody").html("<tr><td colspan='2'>No layers added</td></tr>");
@@ -374,6 +456,42 @@ var comicBuilder={
 		canvas.deactivateAll();
 		canvas.renderAll();
 		this.updateLayers();
+	},
+	/**
+	 * Deactivates any tools
+	 */
+	resetTools:function(){
+		$('.toolContainer').hide();
+		$('.toolButton').removeClass('active');
+	},
+	/**
+	 * Deactivates any tools
+	 */
+	textTool:function(edit){
+		if(edit){
+			var object = canvas.getActiveObject();
+			$('.textString').val(object.getText());
+			$('.fontValue').val(object.fontFamily);
+			$('.fontSize').val(object.fontSize);
+			$('.textAdd').attr("disabled", true);
+		} else {
+			$('.textString').val('');
+			$('.fontValue').val('Impact');
+			$('.fontSize').val(25);
+			$('.textAdd').attr("disabled", false);
+		}
 	}
 };
 jQuery(document).ready(function(){comicBuilder.init();});
+jQuery.download = function(url, data, method){
+	if( url && data ){ 
+		data = typeof data == 'string' ? data : jQuery.param(data);
+		var inputs = '';
+		jQuery.each(data.split('&'), function(){ 
+			var pair = this.split('=');
+			inputs+='<input type="hidden" name="'+ pair[0] +'" value="'+ pair[1] +'" />'; 
+		});
+		jQuery('<form action="'+ url +'" method="'+ (method||'post') +'">'+inputs+'</form>')
+		.appendTo('body').submit().remove();
+	};
+};
