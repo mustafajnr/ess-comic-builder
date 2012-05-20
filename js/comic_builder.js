@@ -305,6 +305,14 @@ var comicBuilder={
 		    }
 			
 		});
+		
+		jQuery("#btnFlip").click(function(){
+			if(canvas.getActiveObject()){
+				var object = canvas.getActiveObject();
+				object.flipX = !object.flipX;
+				canvas.renderAll();
+			}
+		});
 		/**
 		 * Initializations
 		 */
